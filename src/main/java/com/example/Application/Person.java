@@ -2,6 +2,7 @@ package com.example.Application;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,7 @@ public class Person {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
 
+  
   private Long id;
 
   @NotBlank(message = "The Name is required.")
@@ -23,8 +25,10 @@ public class Person {
   private String name;
 
   @NotBlank(message = "The CPF is required.")
+  @Column(unique = true)
   private String cpf;
 
+  
   private String email;
 
   @NotNull(message = "The date of birth is required.")

@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.caelum.stella.tinytype.CPF;
-
 @RestController
 @RequestMapping("/Person")
 
@@ -27,16 +25,18 @@ public class PersonController {
         return personRepository.findAll();
     }
 
-    // @PutMapping("Person/{id}")
-    // public @ResponseBody void updateUser(@PathVariable("id") Long id) {
-    // Person personFromDb = personRepository.findById(id);
-    // // crush the variables of the object found
-    // personFromDb.setName("john");
-    // personFromDb.setCpf("39970118854");
-    // personFromDb.setEmail("email@email.com");
-    // personFromDb.setDataNascimento(LocalDate.of(19,06,1999));
-    // personRepository.save(personFromDb);
-    // }
+    @PutMapping("Atualizar")
+    public @ResponseBody void updateUser(@RequestParam String cpf) {
+        Iterable<Person> iterablePersonFromDb = personRepository.findAll();
+        for (Person person : iterablePersonFromDb) {
+            if (person.getCpf() == ValidaCpf.Formatado(cpf)) {
+                person.setName("Nome2");
+                person.setEmail("email@dois.com");
+                person.setDataNascimento(LocalDate.of(1991, 01, 01));
+                personRepository.save(person);
+            }
+        }
+    }
 
     @DeleteMapping("/Delete/{id}")
     public @ResponseBody void deleteUser(@RequestParam Integer id) {
@@ -51,12 +51,10 @@ public class PersonController {
         if (ValidaCpf.valida(cpf) == false) {
             return "Cpf Error";
         }
-        ;
-        CPF cpfFormatado = new CPF(cpf);
 
         Person p = new Person();
         p.setName(name);
-        p.setCpf(cpfFormatado.getNumeroFormatado());
+        p.setCpf(ValidaCpf.Formatado(cpf));
         p.setEmail(email);
         p.setDataNascimento(dataNascimento);
         personRepository.save(p);
