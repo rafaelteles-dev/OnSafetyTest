@@ -14,10 +14,9 @@ import jakarta.validation.constraints.Size;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class Person {
+  
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-
-  
   private Long id;
 
   @NotBlank(message = "The Name is required.")
@@ -27,7 +26,6 @@ public class Person {
   @NotBlank(message = "The CPF is required.")
   @Column(unique = true)
   private String cpf;
-
   
   private String email;
 

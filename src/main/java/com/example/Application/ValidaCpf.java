@@ -23,7 +23,7 @@ public class ValidaCpf {
 
     }
 
-    public static String Formatado(String cpf){
+    public static String formatado(String cpf){
         CPF cpfFormatado = new CPF(cpf);
         return cpfFormatado.getNumeroFormatado();
     }
