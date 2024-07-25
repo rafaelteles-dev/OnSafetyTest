@@ -17,7 +17,7 @@ public class Person {
   
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+  private Integer id;
 
   @NotBlank(message = "The Name is required.")
   @Size(min = 2, max = 100, message = "The length of full name must be between 2 and 100 characters.")
@@ -33,11 +33,11 @@ public class Person {
   @Past(message = "The date of birth must be in the past.")
   private LocalDate dataNascimento;
 
-  public Long getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 

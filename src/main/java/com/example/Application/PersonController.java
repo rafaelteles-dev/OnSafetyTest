@@ -3,10 +3,12 @@ package com.example.Application;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,19 +26,32 @@ public class PersonController {
         return personRepository.findAll();
     }
 
-    @PutMapping("Atualizar")
-    public @ResponseBody void updateUser(@RequestParam String cpf) {
+    @PutMapping(value = "Atualizar", consumes = "application/json", produces = "application/json")
+    public ResponseEntity updateUser(@RequestBody Person model) {
 
-        Iterable<Person> iterablePersonFromDb = personRepository.findAll();
-
-        for (Person person : iterablePersonFromDb) {
-            if (person.getCpf() == ValidaCpf.formatado(cpf)) {
-                person.setName("Nome2");
-                person.setEmail("email@dois.com");
-                person.setDataNascimento(LocalDate.of(1991, 01, 01));
-                personRepository.save(person);
-            }
+        var p = personRepository.findById(model.getId());
+        if (p.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        var person = p.get();
+
+        if (model.getName() != null) {
+            person.setName(model.getName());
+        }
+        if (model.getCpf() != null) {
+            if (ValidaCpf.valida(model.getCpf()) == false) {
+                return ResponseEntity.badRequest().body("Invalid CPF");
+            }
+            person.setCpf(ValidaCpf.formatado(model.getCpf()));
+        }
+        if (model.getEmail() != null) {
+            person.setEmail(model.getEmail());
+        }
+        if (model.getDataNascimento() != null) {
+            person.setDataNascimento(model.getDataNascimento());
+        }
+        personRepository.save(person);
+        return ResponseEntity.ok().body(person);
     }
 
     @DeleteMapping("/Delete/{id}")
@@ -47,7 +62,7 @@ public class PersonController {
     @PostMapping("/Add")
     public @ResponseBody String addNewPerson(@RequestParam String name,
             @RequestParam String cpf,
-            @RequestParam String email, 
+            @RequestParam String email,
             @RequestParam LocalDate dataNascimento) {
 
         if (ValidaCpf.valida(cpf) == false) {
